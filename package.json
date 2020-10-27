@@ -1,0 +1,23 @@
+{
+  "name": "places-scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abdullahoguk/places-scraper.git"
+  },
+  "author": "abdullah",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/abdullahoguk/places-scraper/issues"
+  },
+  "homepage": "https://github.com/abdullahoguk/places-scraper#readme",
+  "dependencies": {
+    "puppeteer": "^5.4.0"
+  }
+}
