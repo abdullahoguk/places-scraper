@@ -1,10 +1,17 @@
 const puppeteer = require('puppeteer');
+const fs = require('fs');
+const util = require('util');
+const jsonexport = require('jsonexport');
 
-var query = "ajans";
+const delay = util.promisify(setTimeout);
+
+var headless=true;
+
+var query = "teknik servis";
 var lat = "40.8416102"
 var long = "31.1428242";
 var zoom = "14";
-var maxPages = 2;
+var maxPages = 5;
 
 var places = [];
 
@@ -13,10 +20,10 @@ scrape(query, lat, long, zoom, maxPages);
 
 //scrape 2
 async function scrape(query, lat, long, zoom) {
-
+    var query = query.split(" ").join("+")
     let url = `https://www.google.com/maps/search/${query}/@${lat},${long},${zoom}z`
     const browser = await puppeteer.launch({
-        headless: false,
+        headless: headless,
         args: ["--disable-setuid-sandbox"],
         'ignoreHTTPSErrors': true
     });
@@ -24,13 +31,16 @@ async function scrape(query, lat, long, zoom) {
 
 
 
-    const page = await browser.newPage();
+    const page = await retry(()=>browser.newPage());
+    //const page = await browser.newPage()
     await page.goto(url);
     await page.waitForSelector('.widget-expand-button-pegman-icon');
     //scrape pages
     while (currentPage <= maxPages) {
         var pagePlaces = [];
-        await page.waitForSelector('.section-layout .section-result');
+        //await page.waitForSelector('.section-layout .section-result');
+        await retry(()=>page.waitForSelector('.section-layout .section-result'));
+        
         var pageResultItems = await page.$$(".section-result");
         var numberOfItems = pageResultItems.length;
 
@@ -42,38 +52,39 @@ async function scrape(query, lat, long, zoom) {
             await page.waitForSelector(`.section-layout .section-result[data-result-index='${index}']`);
             await page.click(`.section-layout .section-result[data-result-index='${index}']`);
             
-            await page.waitForSelector("button[aria-label='Yorum yazın']");
-            
+            //await page.waitForSelector("button[aria-label='Yorum yazın']");
+            await retry(()=>page.waitForSelector("button[aria-label='Yorum yazın']"))
 
             //await timeout(500);
-            await page.waitForTimeout(1000);
+            await page.waitForTimeout(500);
             const data = await page.evaluate(async function () {
                 var currentItem = {};
                 //document.querySelector("button[aria-label='Adresi kopyala']")
-                currentItem.adress = await document.querySelector(`button[data-item-id='address']`) ? document.querySelector(`button[data-item-id='address']`).getAttribute("aria-label") :"";
-                currentItem.website = await document.querySelector(`button[data-item-id='authority']`) ? document.querySelector(`button[data-item-id='authority']`).getAttribute("aria-label") :"";
-                currentItem.tel = await document.querySelector(`button[data-tooltip='Telefon numarasını kopyala']`) ? document.querySelector(`button[data-tooltip='Telefon numarasını kopyala']`).getAttribute("aria-label") :"";
+                currentItem.name=await document.querySelector(".section-hero-header-title-description h1") ? document.querySelector(".section-hero-header-title-description h1").innerText : " ";
+                currentItem.adress = await document.querySelector(`button[data-item-id='address']`) ? document.querySelector(`button[data-item-id='address']`).getAttribute("aria-label").substr(7).trim() :" ";
+                currentItem.website = await document.querySelector(`button[data-item-id='authority']`) ? document.querySelector(`button[data-item-id='authority']`).getAttribute("aria-label").substr(11).trim() :" ";
+                currentItem.tel = await document.querySelector(`button[data-tooltip='Telefon numarasını kopyala']`) ? document.querySelector(`button[data-tooltip='Telefon numarasını kopyala']`).getAttribute("aria-label").substr(8).trim() :" ";
                 currentItem.mapsUrl = await window.location.href;
-                currentItem.openHours = await document.querySelector(".section-open-hours-container") ? document.querySelector(".section-open-hours-container").getAttribute("aria-label") : "";
-                currentItem.category = await document.querySelector(`button[jsaction='pane.rating.category']`) ? document.querySelector(`button[jsaction='pane.rating.category']`).innerText : "";
-                currentItem.rating = await document.querySelector("span.section-star-display") ? document.querySelector("span.section-star-display").innerText : "";
+                currentItem.openHours = await document.querySelector(".section-open-hours-container") ? document.querySelector(".section-open-hours-container").getAttribute("aria-label").slice(0,-34).trim() : " ";
+                currentItem.category = await document.querySelector(`button[jsaction='pane.rating.category']`) ? document.querySelector(`button[jsaction='pane.rating.category']`).innerText : " ";
+                currentItem.rating = await document.querySelector("span.section-star-display") ? document.querySelector("span.section-star-display").innerText : " ";
 
-                
                 /*
                 await navigator.clipboard.readText()
                 .then(text => {
                     adress = text;
                 }).catch(err => {console.log('error on clipboard', err);});*/       
-    
                 return currentItem;
             });
 
             pagePlaces.push(data);
+            console.log(JSON.stringify(data));
+
 
             //await waitTillHTMLRendered(page)
            // await     page.waitForNavigation({ waitUntil: 'domcontentloaded' })
 
-           await page.waitForTimeout(2000);
+           await page.waitForTimeout(1000);
             //await page.goBack();
             await page.click("button.section-back-to-list-button");
             //await page.waitForNavigation({ waitUntil: 'domcontentloaded'})
@@ -82,12 +93,10 @@ async function scrape(query, lat, long, zoom) {
             //await timeout(500);
            // await waitTillHTMLRendered(page)
 
-           await page.waitForTimeout(2000);
+           await page.waitForTimeout(1000);
 
         }
 
-        
-        
         places = [...places, ...pagePlaces];
         currentPage++;
         await page.waitForSelector("button[aria-label='Sonraki sayfa']");
@@ -104,28 +113,70 @@ async function scrape(query, lat, long, zoom) {
             await page.evaluate(() => {
                 document.querySelector("button[aria-label='Sonraki sayfa']").click();
             });
-            await page.waitForTimeout(3000);
+            await page.waitForTimeout(2000);
         }
         //await page.waitForNavigation();
         //await timeout(3000);
         //await page.waitForNavigation({ waitUntil: 'domcontentloaded' })
         //await waitTillHTMLRendered(page)
 
-
-
         console.log(pagePlaces);
         console.log("isMax: " + currentPage <= maxPages);
-
     }
 
-    //console.log(places,places.length);    
+
 
     await browser.close();
+
+    var csvPlaces = ""
+    jsonexport(places, function(err, csv){
+        if (err) return console.error(err);
+        csvPlaces =  csv;
+    });
+
+
+
+
+    fs.writeFile(`./data/${query}.csv`, csvPlaces, () => {
+        console.log('CSV Dosyaya yazıldı');
+      });
+
+      fs.writeFile(`./data/${query}.json`, JSON.stringify(places), () => {
+        console.log('JSON Dosyaya yazıldı');
+      });
 }
 
+/*
 function timeout(ms) { //pass a time in milliseconds to this function
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function retry(fn, retryDelay = 100, numRetries = 3){
+    return async function(...args){
+        for (let i = 0; i < numRetries; i++) {
+            try {
+              return await fn(...args); 
+            } catch (e) {
+              if (i === numRetries - 1) throw e;
+              await delay(retryDelay);
+              retryDelay = retryDelay * 2;
+            }
+          }
+    }; 
   }
+*/
+
+async function retry(promiseFactory, retryCount=3) {
+    try {
+      return await promiseFactory();
+    } catch (error) {
+      if (retryCount <= 0) {
+        throw error;
+      }
+      return await retry(promiseFactory, retryCount - 1);
+    }
+  }
+
 
   const waitTillHTMLRendered = async (page, timeout = 30000) => {
     const checkDurationMsecs = 1000;

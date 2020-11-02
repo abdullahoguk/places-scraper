@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/abdullahoguk/places-scraper#readme",
   "dependencies": {
+    "jsonexport": "^3.0.1",
     "puppeteer": "^5.4.0"
   }
 }
