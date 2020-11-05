@@ -2,19 +2,22 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const util = require('util');
 const jsonexport = require('jsonexport');
+const {cities} = require('./data.js')
 
 const delay = util.promisify(setTimeout);
 
-var headless=true;
+var headless=false;
 
+var plate="52";
 var query = "teknik servis";
-var lat = "40.8416102"
-var long = "31.1428242";
+//var lat = "40.8416102"
+//var long = "31.1428242";
+var lat = `${cities[plate].lat}`
+var long = `${cities[plate].lon}`;
 var zoom = "14";
 var maxPages = 5;
 
 var places = [];
-
 
 scrape(query, lat, long, zoom, maxPages);
 
@@ -28,7 +31,6 @@ async function scrape(query, lat, long, zoom) {
         'ignoreHTTPSErrors': true
     });
     var currentPage = 1;
-
 
 
     const page = await retry(()=>browser.newPage());
@@ -134,9 +136,6 @@ async function scrape(query, lat, long, zoom) {
         csvPlaces =  csv;
     });
 
-
-
-
     fs.writeFile(`./data/${query}.csv`, csvPlaces, () => {
         console.log('CSV Dosyaya yazıldı');
       });
@@ -146,25 +145,6 @@ async function scrape(query, lat, long, zoom) {
       });
 }
 
-/*
-function timeout(ms) { //pass a time in milliseconds to this function
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-function retry(fn, retryDelay = 100, numRetries = 3){
-    return async function(...args){
-        for (let i = 0; i < numRetries; i++) {
-            try {
-              return await fn(...args); 
-            } catch (e) {
-              if (i === numRetries - 1) throw e;
-              await delay(retryDelay);
-              retryDelay = retryDelay * 2;
-            }
-          }
-    }; 
-  }
-*/
 
 async function retry(promiseFactory, retryCount=3) {
     try {
@@ -176,7 +156,6 @@ async function retry(promiseFactory, retryCount=3) {
       return await retry(promiseFactory, retryCount - 1);
     }
   }
-
 
   const waitTillHTMLRendered = async (page, timeout = 30000) => {
     const checkDurationMsecs = 1000;
@@ -208,59 +187,5 @@ async function retry(promiseFactory, retryCount=3) {
       await page.waitFor(checkDurationMsecs);
     }  
   };
-/*
-//scrape1
-async function scrape(query, lat, long, zoom) {
-
-    let url = `https://www.google.com/maps/search/${query}/@${lat},${long},${zoom}z`
-    const browser = await puppeteer.launch({
-        headless: false,
-        args: ["--disable-setuid-sandbox"],
-        'ignoreHTTPSErrors': true
-    });
-    var currentPage = 0;
 
 
-
-    const page = await browser.newPage();
-    await page.goto(url);
-
-    //scrape pages
-    while (currentPage < maxPages) {
-        
-        await page.waitForSelector('.section-layout .section-result');
-console.log(page.$$(".section-result"));
-        const data = await page.evaluate(async function () {
-            var isEnd = false;
-            var pagePlaces = [];
-            const results = document.querySelectorAll(".section-layout .section-result");
-            results.forEach(function (result) {
-                var obj = {};
-                obj.name = result.querySelector(".section-result-title span").innerText.trim();
-                obj.shortAdress = result.querySelector(".section-result-location").innerText.trim();
-                obj.tel = result.querySelector(".section-result-phone-number span").innerText.trim();
-                pagePlaces.push(obj);
-            })
-            if(document.querySelector("button[aria-label='Sonraki sayfa']")){
-                document.querySelector("button[aria-label='Sonraki sayfa']").click();
-            }
-            else{
-                isEnd=true;
-            }
-
-            return [pagePlaces,isEnd];
-        });
-        
-        places = [...places, ...data[0]];
-        currentPage++;
-        if(data[1]==true){
-            break;
-        }
-    }
-
-    //console.log(places,places.length);    
-
-    await browser.close();
-}
-
-*/

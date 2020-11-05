@@ -1,9 +1,8 @@
 try catch promise try again....
 maps url add "tr"
 Express sunucu
-gelen verileri temizle (çalışma saatleri, website, telefon...)
 frontend form
-form submit
+form submit/fetch
 frontend progress
 frontend il merkezi enlem boylam
 frontend data preview
@@ -11,4 +10,12 @@ frontend download json or csv (client side)
 save data to backend and serve csv/json
 kücük sunucuya kur
 webpack?
+websocket? cekilen verileri anlık önyüze yolla
+sayfa yenilendiğinde/kapandığında/durdura basıldığında arkadaki işlemi durdur
+işlem durduktan/ya da bittikten sonra client tarafında csv/jsona çevir indirme butonu ekle
 
+
+---------
+
+gelen verileri temizle (çalışma saatleri, website, telefon...)
+backend enlem boylam
