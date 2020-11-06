@@ -26,6 +26,12 @@ function onNewWebsocketConnection(socket) {
 
     // will send a message only to this socket (different than using `io.emit()`, which would broadcast it)
     socket.emit("welcome", `Welcome! You are visitor number ${nextVisitorNumber++}`);
+
+    socket.on("name", function(data) {
+        console.log(data)
+        socket.emit("inform", {"name":data.name, "id": socket.id })
+
+    });
 }
 
 function startServer() {
