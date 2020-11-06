@@ -3,7 +3,7 @@ const http = require("http");
 const express = require("express");
 const socketio = require("socket.io");
 
-const SERVER_PORT = 3000;
+const SERVER_PORT = process.env.PORT || 3000;
 
 let nextVisitorNumber = 1;
 let onlineClients = new Set();
