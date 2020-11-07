@@ -18,7 +18,7 @@ async function ajax(url) {
 /** @returns {void} */
 async function main() {
 
-    const socket = io();
+    const socket = io("/googleplaces");
     //socket.on("connect", () => socket.emit("hello", `Hi there! I am ${window.navigator.userAgent}`));
     socket.on("connect", function(){
         socket.emit("name", {"name":"ali"});
