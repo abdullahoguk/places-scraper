@@ -1,25 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Google Places Scraper</title>
+	<meta charset="UTF-8" />
+	<title>Google Places Scraper</title>
+	<link rel="stylesheet" href="scraper.css" />
 </head>
+
 <body>
+	<div hidden>
+		<p>This is a sample page demonstrating how Express and socket.io work.</p>
 
-<p>This is a sample page demonstrating how Express and socket.io work.</p>
+		<p>
+			Here's a random number fetched via REST:
+			<span id="random-number"></span>
+		</p>
 
-<p>Here's a random number fetched via REST: <span id="random-number"></span></p>
+		<p>Server welcome message: <span id="welcome"></span></p>
 
-<p>Server welcome message: <span id="welcome"></span></p>
+		<p>Seconds since server started: <span id="seconds"></span></p>
 
-<p>Seconds since server started: <span id="seconds"></span></p>
+		<p>Clients online: <span id="online"></span></p>
+	</div>
 
-<p>Clients online: <span id="online"></span></p>
+	<div class="page">
+		<section class="logo">
+			<div><span>Google</span><span>Places</span><span>Scraper</span></div>
+		</section>
+
+		<section class="form">
+			<div class="title">ara</div>
+
+			<div class="inputs">
+				<div class="field">
+					<label for="query">Arama terimi</label>
+					<input type="text" id="query" name="query"></input>
+				</div>
+				<div class="field">
+					<label for="city">Şehir</label>
+					<select id="city" name="city">
+						<option value="0">Şehir Seç...</option>
+					  </select>
+				</div>
+
+				<div class="field">
+
+					<label for="zoom">zoom</label>
+					<input type="number" id="zoom" name="zoom" value=14></input>
+				</div>
+				<div class="field">
+					<label for="limit">sayfa limiti</label>
+					<input type="number" id="limit" name="limit" value=0></input>
+				</div>
+
+				<button class="search button">Ara</button>
+				<button class="download button disabled">İndir</button>
+			</div>
+
+
+		</section>
+
+		<section class="logger">
+			<div class="title">logs</div>
+			<div class="logs">
+				<p>Arama isteği alındı</p>
+				<p>puppeteer başladı</p>
+				<p>sayafa 1 eleman 1</p>
+				<p>sayafa 1 eleman 2</p>
+				<p>sayafa 1 eleman 3</p>
+				<p>sayafa 1 eleman 4</p>
+				<p>sayafa 1 eleman 5</p>
+				<p>Hata</p>
+			</div>
+		</section>
+
+		<section class="results">
+			<div class="title">
+				<div class="left">sonuçlar</div>
+				<div class="right">sayfa: <span class="currentPage">1</span> eleman: <span class="currentIndex">5</span>
+				</div>
+			</div>
+			<div class="live">
+				<div class="item">
+					<div class="name">Met Ajans</div>
+					<div class="website">duzcemetajans.com</div>
+					<div class="phone">+905532654050</div>
+					<div class="adress">Gaziantep Cad. Çınlar Sok., Ayakkabıcılar İş Hanı Kat: 2 No: 10/205, 81000</div>
+				</div>
+
+				<div class="item">
+					<div class="name">Sinemarka Dijital Medya Ajansı</div>
+					<div class="website">sinemarka.com</div>
+					<div class="phone">+905352526717</div>
+					<div class="adress">Camikebir Mahallesi Rıhtım Caddesi No: 2 Pak Ekizceli İş Merkezi İç Kapı No:,
+						D:126, 81020 Merkez/Düzce</div>
+				</div>
+
+				<div class="item">
+					<div class="name">Met Ajans</div>
+					<div class="website">duzcemetajans.com</div>
+					<div class="phone">+905532654050</div>
+					<div class="adress">Gaziantep Cad. Çınlar Sok., Ayakkabıcılar İş Hanı Kat: 2 No: 10/205, 81000</div>
+				</div>
+
+				<div class="item">
+					<div class="name">Sinemarka Dijital Medya Ajansı</div>
+					<div class="website">sinemarka.com</div>
+					<div class="phone">+905352526717</div>
+					<div class="adress">Camikebir Mahallesi Rıhtım Caddesi No: 2 Pak Ekizceli İş Merkezi İç Kapı No:,
+						D:126, 81020 Merkez/Düzce</div>
+				</div>
+
+				<div class="item">
+					<div class="name">Met Ajans</div>
+					<div class="website">duzcemetajans.com</div>
+					<div class="phone">+905532654050</div>
+					<div class="adress">Gaziantep Cad. Çınlar Sok., Ayakkabıcılar İş Hanı Kat: 2 No: 10/205, 81000</div>
+				</div>
+
+				<div class="item">
+					<div class="name">Sinemarka Dijital Medya Ajansı</div>
+					<div class="website">sinemarka.com</div>
+					<div class="phone">+905352526717</div>
+					<div class="adress">Camikebir Mahallesi Rıhtım Caddesi No: 2 Pak Ekizceli İş Merkezi İç Kapı No:,
+						D:126, 81020 Merkez/Düzce</div>
+				</div>
+
+				<div class="item">
+					<div class="name">Met Ajans</div>
+					<div class="website">duzcemetajans.com</div>
+					<div class="phone">+905532654050</div>
+					<div class="adress">Gaziantep Cad. Çınlar Sok., Ayakkabıcılar İş Hanı Kat: 2 No: 10/205, 81000</div>
+				</div>
+
+
+			</div>
+		</section>
+	</div>
+</body>
+<script src="cities.js"></script>
 
 <!-- this link is magically provided when you set up socket.io in server -->
+
 <script src="/socket.io/socket.io.js"></script>
 
 <script src="scraperClient.js"></script>
 
-</body>
 </html>
