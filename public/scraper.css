@@ -217,6 +217,7 @@ background-color: #ccffe288;
   padding:1.25em;
   color:#343434;
   margin-bottom: 5px;
+  text-decoration: none;
 }
 
 .results .live .item:hover {
@@ -237,7 +238,7 @@ background-color: #ccffe288;
   font-weight: 600;
 }
 
-.results .live .item .adress {
+.results .live .item .address {
   font-size: .9em;
 }
 

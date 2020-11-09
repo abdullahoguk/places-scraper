@@ -12,6 +12,8 @@ webpack?
 sayfa yenilendiğinde/kapandığında/durdura basıldığında arkadaki işlemi durdur
 işlem durduktan/ya da bittikten sonra client tarafında csv/jsona çevir indirme butonu ekle
 hata olduğunda devam et butonu hatanın oldugu sayfa ve itemi socketle sunucuya gönder, veriyi cekmeye devam et
+convert scraper function to scraper object or class
+
 socket messages
     server to client
          
@@ -20,7 +22,8 @@ socket messages
         scraped item > data { all item details in an object |  }
 
     client to server
-        scrapePlace > data{query | plate or lat long | zoom | max pages }
+        _scrape > data{query | plate or lat long | zoom | max pages }
+        retry > data{query | plate or lat long | zoom | max pages | start from page | start from index  }
 
 
 ---------
