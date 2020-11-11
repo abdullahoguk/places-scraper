@@ -12,18 +12,56 @@ webpack?
 sayfa yenilendiğinde/kapandığında/durdura basıldığında arkadaki işlemi durdur
 işlem durduktan/ya da bittikten sonra client tarafında csv/jsona çevir indirme butonu ekle
 hata olduğunda devam et butonu hatanın oldugu sayfa ve itemi socketle sunucuya gönder, veriyi cekmeye devam et
-convert scraper function to scraper object or class
+electron app
+
+
+convert scraper function to SCRAPER object or class
+proje başladığında (GET req on /googlescraper) bir puppeteer instance aç her scrape işlemi ayrı sekmede olacak sekilde ayarla 
+SCRAPER objelerine bu puppeteer instencesini bağla
+bu puppeteer instencenı try catche bağla / 
+    tarayıcı çöktü mü kontrol et / cöktüyse 
+        tüm aktif clientları error yap
+        clientlara error mesajı yolla ("puppeteer tarayıcı hatası, yeniden deneniyor")
+        yeni puppeteer instence aç
+        tüm clientların scraper objesindeki puppeteeri yeenisiyle güncelle
+        scrape objelerinde start fonksiyonunu çalıştır
+
+create CLIENT object
+each CLIENT will have a scraper object that has,"scrape id" and functions to start, stop and resume scraper, active state 
+    a CLIENT can have one scrape objects but 
+    CLIENT has an array that stores scrape history (each click on search button, backes up old info and changes SCRAPER objects info). 
+    on server side, check on "scrape" message from client, 
+        if client dont have CLIENT obj create CLIENT obj and create scrape obj and bind them
+        if there is client obj check scrape info 
+            if query, plate and zoom and limit is same and current scrape is active> dont do anything
+            if query, plate and zoom and limit is same and current scrape is error> run retry on scrape obj
+            if one of them is diffirent, stop current, change scrape info, send reset message to client with scrape info, send log message
+
+    on client side create an object called scrapeinfo {state(active,error,finished) | query | plate | zoom | max pages | current page | current index}
+    on reset message  
+        change this scrape info with message data from server 
+        reset current page , current index in both object and view
+
+on server side, check on "disconnect" message from client, 
+    call stop from client's scrape
+    delete that CLIENT it from array
+
+CLIENT objects will be stored in a list or array or set
+
+
+
+
 
 socket messages
     server to client
          
         log > data > {time | type | messege | message data } 
-            > types { scrape started | puppeteer started | current page and index | error | scrapeEnd  } 
+            > types { scrape started | puppeteer started | current page and index | error | scrapeEnd   } 
         scraped item > data { all item details in an object |  }
-
+        reset { query | plate | zoom | max pages }
     client to server
-        _scrape > data{query | plate or lat long | zoom | max pages }
-        retry > data{query | plate or lat long | zoom | max pages | start from page | start from index  }
+        _scrape > data{query | plate | zoom | max pages }
+        retry > data{query | plate | zoom | max pages | start from page | start from index  }
 
 
 ---------
