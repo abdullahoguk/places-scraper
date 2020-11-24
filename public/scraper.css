@@ -218,6 +218,7 @@ background-color: #ccffe288;
   color:#343434;
   margin-bottom: 5px;
   text-decoration: none;
+  flex-grow: 2;
 }
 
 .results .live .item:hover {

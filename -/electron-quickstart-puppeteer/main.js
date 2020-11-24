@@ -1,8 +1,10 @@
 // Modules to control application life and create native browser window
+// electron-packager . googlePlaces --platform=all --asar --asar.unpack="node_modules/puppeteer/.local-chromium/**/*" 
 const {app, BrowserWindow} = require('electron')
 const path = require('path')
 
 // Keep a global reference of the window object, if you don't, the window will
+
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 global.customData = {

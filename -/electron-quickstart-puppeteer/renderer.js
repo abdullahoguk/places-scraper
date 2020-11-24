@@ -9,13 +9,13 @@ const jsonexport = require("jsonexport");
 const { cities } = require("./data.js");
 var customData = require('electron').remote.getGlobal('customData')
 
-console.log(customData.sysDocs);
-
+//console.log(customData.sysDocs);
+console.log(getChromiumExecPath())
 
 
 const delay = util.promisify(setTimeout);
 
-var headless = true;
+var headless = false;
 var places = [];
 
 var searchButton = document.querySelector("button.search");
@@ -71,6 +71,7 @@ async function scrape({query, plate, zoom, maxPages}) {
 		headless: headless,
 		args: ["--disable-setuid-sandbox"],
 		ignoreHTTPSErrors: true,
+        executablePath: getChromiumExecPath()
 	});
 	var currentPage = 1;
 
@@ -235,6 +236,10 @@ async function retry(promiseFactory, retryCount = 3) {
 	}
 }
 
+
+function getChromiumExecPath() {
+  return puppeteer.executablePath().replace('app.asar', 'app.asar.unpacked');
+}
 
 
 

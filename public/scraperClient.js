@@ -5,12 +5,19 @@ var zoomInput = document.querySelector(".form .field #zoom");
 var limitInput = document.querySelector(".form .field #limit");
 
 var scrapedItemsContainer = document.querySelector(".results .live");
+var currentPageSpan = document.querySelector(".results span.currentPage")
+var currentPageIndex = document.querySelector(".results span.currentIndex");
 
 
-const socket = io("/googleplaces");
+const socket = io("/ps");
+
+var currentSearch = {
+                "query":"",
+                "city":"",
+                "items":[]
+            };
 
 
-/** @returns {void} */
 async function main() {
 
     searchButton.addEventListener("click",handleSearch);
@@ -18,9 +25,11 @@ async function main() {
 
 
     //socket.on("connect", () => socket.emit("hello", `Hi there! I am ${window.navigator.userAgent}`));
+    /*
     socket.on("connect", function(){
         socket.emit("name", {"name":"ali"});
     });
+*/
 
     socket.on("inform", function(data){
         console.log(`myId: ${data.id} - MyName: ${data.name}` )
@@ -33,14 +42,16 @@ async function main() {
     socket.on("clientmessage", function(data){
         console.info(data);
     });
-
+/*
     socket.on("message", function(data){
         console.info(data);
     });
+*/
+    socket.on("scrapedItemIndex", function(data){
+        updateCurrentItemIndex(data);
+    });
 
-   
-
-    
+    /*
     const secondsElement = document.getElementById("seconds");
     socket.on("seconds", seconds => secondsElement.innerText = seconds.toString());
 
@@ -49,10 +60,8 @@ async function main() {
 
     const onlineElement = document.getElementById("online");
     socket.on("welcome", welcomeMessage => welcomeElement.innerText = welcomeMessage);
-
+*/
     
-
-
 }
 
 main();
@@ -65,13 +74,16 @@ Object.values(cities).forEach(city => {
 function handleSearch(){
     if(queryInput.value == "" || cityInput.value == 0 || zoomInput.value == 0 || limitInput.value == 0){return}
     var searchData = {
-        "query":queryInput.value,
-        "plate":cityInput.value,
+        "query": queryInput.value,
+        "plate": cityInput.value,
         "zoom": zoomInput.value,
         "maxPages":limitInput.value
     };
+    initializeCurrentSearchObject();
 
     socket.emit("scrape", searchData);
+    scrapedItemsContainer.innerHTML = "";
+    updateCurrentItemIndex({page:"-",index:"-"})
 }
 
 function handleScrapedItem(data){
@@ -87,7 +99,34 @@ function handleScrapedItem(data){
 
     scrapedItemsContainer.appendChild(el);
     scrapedItemsContainer.scrollTop = scrapedItemsContainer.scrollHeight;
+
+    currentSearch.items.push(data);
 }
+
+function  updateCurrentItemIndex(data){
+    currentPageSpan.innerText = data.page;
+    currentPageIndex.innerText = data.index;
+}
+
+function initializeCurrentSearchObject(){
+    currentSearch.query = queryInput.value;
+    currentSearch.city = cityInput.value;
+    currentSearch.items = [];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 async function ajax(url) {
@@ -105,4 +144,6 @@ async function ajax(url) {
         request.addEventListener("error", reject)
     });
 }
+
+
 
