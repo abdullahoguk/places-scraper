@@ -43,7 +43,10 @@ app.get("/googleplaces", (req, res) => {
 //on google places scraper socket client connection
 async function psSocketConnection(socket) {
 	var username = "";
-	const browser = await  openBrowser();
+	var browser = await openBrowser();
+	var isBrowserRunning = true;
+	browser.on('disconnected', ()=> isBrowserRunning = false );
+	
 	console.info(`Socket ${socket.id} has connected.`);
 
 	onlineClientsCustomUrl.add(socket.id);
@@ -53,23 +56,34 @@ async function psSocketConnection(socket) {
 	socket.on("disconnect", () => {
 		onlineClientsCustomUrl.delete(socket.id);
 		console.info(`Socket ${socket.id} has disconnected.`);
-		scrapeInstance.closeBrowser();
+
+		scrapeInstance == null ? browser.close() : scrapeInstance.closeBrowser();
 		//scrapeInstance.closeTab();
 		//browser.close();
     });
     
-    socket.on("scrape", (data) => {
+    socket.on("scrape", async (data) => {
 		//console.log(ScrapeFactory)
 		if (scrapeInstance == null){
+		// TODO: if browser closed, create new one set to instance.browser
+		console.log(isBrowserRunning)
+
 			scrapeInstance = new ScrapeFactory(socket, data.query, data.plate, data.zoom, data.maxPages,browser);
 			scrapeInstance.scrape();
 		}
 
 		else{
+
 			scrapeInstance.changeScrapeData(socket, data.query, data.plate, data.zoom, data.maxPages)
+			// TODO: if browser closed, create new one set to instance.browser
+			if(!isBrowserRunning){
+				browser = await openBrowser();
+				browser.on('disconnected', ()=> isBrowserRunning = false );
+				isBrowserRunning = true;
+				scrapeInstance.browser = browser;
+			}
 			scrapeInstance.scrape();
 		}
-
         console.info(`Socket ${socket.id} arama isteği yolladı.`);
         //scrape(socket, data.query, data.plate, data.zoom, data.maxPages);
 	});
@@ -79,8 +93,9 @@ async function psSocketConnection(socket) {
 }
 
 async function openBrowser(){
-	var headless = false;
-
+	
+	var headless = process.env.PUPPETEER_HEADLESS == "false" ? false : true;
+	
 	return  await puppeteer.launch({
 		headless: headless,
 		args: ["--disable-setuid-sandbox","--no-sandbox"],

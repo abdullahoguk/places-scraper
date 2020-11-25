@@ -199,7 +199,6 @@ this.closeTab();
 async function changeScrapeData(socket, query,plate, zoom,maxPages) {
 	this.socket = socket;
 	this.query = query.split(" ").join("+");
-	console.log(cities[plate].lat)
 
     this.lat = cities[plate].lat;
     this.lon = cities[plate].lon;
