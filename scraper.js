@@ -22,8 +22,9 @@ function ScrapeFactory(socket, query,plate, zoom,maxPages,browser) {
 
 	this.scrape=scrape;
 	this.changeScrapeData = changeScrapeData;
-	//this.closeBrowser = closeBrowser;
 	this.closeTab = closeTab;
+	this.closeBrowser = closeBrowser;
+
 	this.browser = browser;
 }
 
@@ -186,11 +187,11 @@ this.closeTab();
 		csvPlaces = csv;
 	});
 
-	fs.writeFile(`./data/${this.query}.csv`, csvPlaces, () => {
+	fs.writeFile(`./public/scrapedData/${this.query}.csv`, csvPlaces, () => {
 		console.log("CSV Dosyaya yazıldı");
 	});
 
-	fs.writeFile(`./data/${this.query}.json`, JSON.stringify(places), () => {
+	fs.writeFile(`./public/scrapedData/${this.query}.json`, JSON.stringify(places), () => {
 		console.log("JSON Dosyaya yazıldı");
 	});
 }
@@ -205,21 +206,26 @@ async function changeScrapeData(socket, query,plate, zoom,maxPages) {
 	this.url = `https://www.google.com/maps/search/${this.query}/@${this.lat},${this.lon},${this.zoom}z`;
 
 	//TODO 	close browser
+
+	await this.closeTab();
 	// reset data
+	/*
 	this.browser = await puppeteer.launch({
 		headless: headless,
-		args: ["--disable-setuid-sandbox", "--no-sandbox",],
+		args: ["--disable-setuid-sandbox"],
 		ignoreHTTPSErrors: true,
 	});
+	*/
 	this.currentPage = 1;
 	this.maxPages= maxPages;
 	
 }
-/*
+
 async function closeBrowser(){
+	await this.closeTab();
 	await this.browser.close();
 }
-*/
+
 async function closeTab(){
 	await this.page.close();
 }

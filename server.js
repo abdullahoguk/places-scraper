@@ -1,5 +1,7 @@
 const http = require("http");
 const express = require("express");
+const path = require('path');
+const serveIndex = require('serve-index')
 const socketio = require("socket.io");
 const { ScrapeFactory } = require("./scraper.js");
 const puppeteer = require("puppeteer");
@@ -25,6 +27,8 @@ server.listen(SERVER_PORT, () =>{
 
 // serve static files from a given folder
 app.use(express.static("public"));
+//app.use('/exported', express.static(path.join(__dirname, 'public/scrapedData')))
+app.use('/exported', express.static('public/scrapedData'), serveIndex('public/scrapedData', {'icons': true}))
 
 
 //google places scraper socket
@@ -34,7 +38,6 @@ psSocket.on("connection", psSocketConnection);
 
 app.get("/googleplaces", (req, res) => {
 	res.sendFile("./public/scraper.html", { root: __dirname });
-	
 });
 
 //on google places scraper socket client connection
@@ -42,7 +45,6 @@ async function psSocketConnection(socket) {
 	var username = "";
 	const browser = await  openBrowser();
 	console.info(`Socket ${socket.id} has connected.`);
-	console.log(socket.nsp.name)
 
 	onlineClientsCustomUrl.add(socket.id);
 
@@ -51,16 +53,16 @@ async function psSocketConnection(socket) {
 	socket.on("disconnect", () => {
 		onlineClientsCustomUrl.delete(socket.id);
 		console.info(`Socket ${socket.id} has disconnected.`);
-		//scrapeInstance.closeBrowser();
+		scrapeInstance.closeBrowser();
 		//scrapeInstance.closeTab();
-		browser.close();
+		//browser.close();
     });
     
     socket.on("scrape", (data) => {
 		//console.log(ScrapeFactory)
 		if (scrapeInstance == null){
 			scrapeInstance = new ScrapeFactory(socket, data.query, data.plate, data.zoom, data.maxPages,browser);
-			scrapeInstance.scrape()
+			scrapeInstance.scrape();
 		}
 
 		else{
@@ -72,7 +74,6 @@ async function psSocketConnection(socket) {
         //scrape(socket, data.query, data.plate, data.zoom, data.maxPages);
 	});
 
-
 	//send a message to everyone
 	//this.emit("message", "a person joined");
 }
@@ -82,7 +83,7 @@ async function openBrowser(){
 
 	return  await puppeteer.launch({
 		headless: headless,
-		args: ["--disable-setuid-sandbox", "--no-sandbox",],
+		args: ["--disable-setuid-sandbox"],
 		ignoreHTTPSErrors: true,
 	});
 }

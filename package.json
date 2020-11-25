@@ -21,6 +21,7 @@
     "express": "^4.17.1",
     "jsonexport": "^3.0.1",
     "puppeteer": "^5.4.0",
+    "serve-index": "^1.9.1",
     "socket.io": "^3.0.0"
   }
 }
