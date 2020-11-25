@@ -82,7 +82,7 @@ async function openBrowser(){
 
 	return  await puppeteer.launch({
 		headless: headless,
-		args: ["--disable-setuid-sandbox"],
+		args: ["--disable-setuid-sandbox", "--no-sandbox",],
 		ignoreHTTPSErrors: true,
 	});
 }

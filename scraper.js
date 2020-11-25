@@ -208,7 +208,7 @@ async function changeScrapeData(socket, query,plate, zoom,maxPages) {
 	// reset data
 	this.browser = await puppeteer.launch({
 		headless: headless,
-		args: ["--disable-setuid-sandbox"],
+		args: ["--disable-setuid-sandbox", "--no-sandbox",],
 		ignoreHTTPSErrors: true,
 	});
 	this.currentPage = 1;
