@@ -63,31 +63,46 @@ async function scrape(){
 		var pageResultItems = await this.page.$$(".section-result:not([data-result-ad-type])");
 		var numberOfItems = pageResultItems.length;
 
+		//Iterate items in current page
 		for (let index = 1; index <= numberOfItems; index++) {
 			console.log("Sayfa:" + this.currentPage + " Eleman:" + index);
 			await this.page.waitForSelector(
 				`.section-layout .section-result[data-result-index='${index}']`
 			);
+
+			//click current item
 			await this.page.click(
 				`.section-layout .section-result[data-result-index='${index}']`
 			);
 
 			//await page.waitForSelector("button[aria-label='Yorum yazın']");
-			await retry(() =>
-			this.page.waitForSelector("button[aria-label='Yorum yazın']")
-			);
+
+			try {
+				await retry(() => this.page.waitForSelector("button[aria-label='Yorum yazın']"));
+			} catch (error) {
+				console.error("'Yorum yazın' butonu bulunamadı.\n Muhtemelen burasi bir işletme değil")
+				await this.page.click("button.section-back-to-list-button");
+				await this.page.waitForTimeout(1000);
+				// TODO: decide current item is company or not in effective way
+				continue;
+			}
+
 
 			//await timeout(500);
 			await this.page.waitForTimeout(500);
+			
+			//get deails of curent item
 			const data = await this.page.evaluate(async function () {
 				var currentItem = {};
 				//document.querySelector("button[aria-label='Adresi kopyala']")
+
 				currentItem.name = (await document.querySelector(
 					".section-hero-header-title-description h1"
 				))
 					? document.querySelector(".section-hero-header-title-description h1")
 							.innerText
 					: " ";
+				
 				currentItem.address = (await document.querySelector(
 					`button[data-item-id='address']`
 				))
@@ -142,8 +157,9 @@ async function scrape(){
 				return currentItem;
 			});
 
-			pagePlaces.push(data);
-            console.log(JSON.stringify(data));
+			if(data.name!==" ") pagePlaces.push(data);
+
+            //console.log(JSON.stringify(data));
 			this.socket.emit("scrapedItem", data);
 			this.socket.emit("scrapedItemIndex", {page:this.currentPage, index});
 
@@ -163,6 +179,7 @@ async function scrape(){
 		);
 		console.log("isEnd: " + isEnd);
 		if (isEnd == true) {
+			// TODO Probably not working test it
 			console.log("STOP IT");
 			this.currentPage = this.maxPages + 1;
 			break;
@@ -228,10 +245,6 @@ async function closeBrowser(){
 async function closeTab(){
 	await this.page.close();
 }
-
-
-
-
 
 module.exports = {ScrapeFactory};
 
