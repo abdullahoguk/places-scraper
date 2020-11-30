@@ -1,4 +1,6 @@
 var searchButton = document.querySelector("button.search");
+var downloadButton = document.querySelector("button.download");
+
 var queryInput = document.querySelector(".form .field #query");
 var cityInput = document.querySelector(".form .field #city");
 var zoomInput = document.querySelector(".form .field #zoom");
@@ -8,6 +10,7 @@ var logsListContainer = document.querySelector(".logger .logs");
 var scrapedItemsContainer = document.querySelector(".results .live");
 var currentPageSpan = document.querySelector(".results span.currentPage")
 var currentPageIndex = document.querySelector(".results span.currentIndex");
+var total = document.querySelector(".results span.total");
 
 const socket = io("/ps");
 
@@ -20,16 +23,11 @@ var currentSearch = {
 async function main() {
 
     searchButton.addEventListener("click",handleSearch);
+    downloadButton.addEventListener("click",handleDownload);
+
     socket.on("scrapedItem", handleScrapedItem);
     socket.on("log", handleLogItem);
 
-
-    //socket.on("connect", () => socket.emit("hello", `Hi there! I am ${window.navigator.userAgent}`));
-    /*
-    socket.on("connect", function(){
-        socket.emit("name", {"name":"ali"});
-    });
-*/
 
     socket.on("inform", function(data){
         console.log(`myId: ${data.id} - MyName: ${data.name}` )
@@ -48,20 +46,10 @@ async function main() {
     });
 */
     socket.on("scrapedItemIndex", function(data){
+        var data = data;
+        data.total = currentSearch.items.length;
         updateCurrentItemIndex(data);
     });
-
-    /*
-    const secondsElement = document.getElementById("seconds");
-    socket.on("seconds", seconds => secondsElement.innerText = seconds.toString());
-
-    const welcomeElement = document.getElementById("welcome");
-    socket.on("online", online => onlineElement.innerText = online.toString());
-
-    const onlineElement = document.getElementById("online");
-    socket.on("welcome", welcomeMessage => welcomeElement.innerText = welcomeMessage);
-*/
-    
 }
 
 main();
@@ -83,7 +71,13 @@ function handleSearch(){
 
     socket.emit("scrape", searchData);
     scrapedItemsContainer.innerHTML = "";
-    updateCurrentItemIndex({page:"-",index:"-"})
+    updateCurrentItemIndex({page:"-",index:"-",total:"-"})
+}
+
+function handleDownload(){
+    const fileName = `${currentSearch.city}_${currentSearch.query}`;
+    const exportType = 'xls';
+    window.exportFromJSON({data: currentSearch.items, fileName, exportType });
 }
 
 function handleScrapedItem(data){
@@ -116,6 +110,7 @@ function handleLogItem(data){
 function  updateCurrentItemIndex(data){
     currentPageSpan.innerText = data.page;
     currentPageIndex.innerText = data.index;
+    total.innerText = data.total;
 }
 
 function initializeCurrentSearchObject(){

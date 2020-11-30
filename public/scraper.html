@@ -25,7 +25,7 @@
 
 	<div class="page">
 		<section class="logo">
-			<div><span>Google</span><span>Places</span><span>Scraper</span></div>
+			<div><span>Google</span><span>Dükkan</span><span>Arama</span></div>
 		</section>
 
 		<section class="form">
@@ -54,7 +54,7 @@
 				</div>
 
 				<button class="search button">Ara</button>
-				<button class="download button disabled">İndir</button>
+				<button class="download button">İndir</button>
 			</div>
 
 
@@ -70,20 +70,18 @@
 		<section class="results">
 			<div class="title">
 				<div class="left">sonuçlar</div>
-				<div class="right">sayfa: <span class="currentPage">1</span> eleman: <span class="currentIndex">5</span>
+				<div class="right">sayfa: <span class="currentPage">-</span> eleman: <span class="currentIndex">-</span>toplam: <span class="total">-</span>
 				</div>
 			</div>
 			<div class="live">
-
-
 			</div>
 		</section>
 	</div>
 </body>
 <script src="cities.js"></script>
+<script src="https://unpkg.com/export-from-json/dist/umd/index.min.js"></script>
 
 <!-- this link is magically provided when you set up socket.io in server -->
-
 <script src="/socket.io/socket.io.js"></script>
 
 <script src="scraperClient.js"></script>

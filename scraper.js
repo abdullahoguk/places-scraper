@@ -183,6 +183,7 @@ async function scrape(){
 		if (isEnd == true) {
 			// TODO Probably not working test it
 			console.log("STOP IT");
+			this.socket.emit("log", {type:"success" ,content:`Son sayfaya geldiniz`});
 			this.currentPage = this.maxPages + 1;
 			break;
 		} else {
@@ -200,6 +201,7 @@ async function scrape(){
 //this.closeBrowser()
 this.closeTab();
 
+
 	var csvPlaces = "";
 	jsonexport(places, function (err, csv) {
 		if (err) return console.error(err);
@@ -207,7 +209,6 @@ this.closeTab();
 	});
 
 	fs.writeFile(`./public/scrapedData/${this.query}.csv`, csvPlaces, () => {
-		console.log("CSV Dosyaya yazıldı");
 		this.socket.emit("log", {type:"success" ,content:`CSV dosyası sunucuya yazıldı`});
 	});
 
@@ -227,6 +228,8 @@ async function changeScrapeData(socket, query,plate, zoom,maxPages) {
 	//TODO 	close browser
 
 	await this.closeTab();
+	this.socket.emit("log", {type:"success" ,content:`arama isteği değiştirildi`});
+
 	// reset data
 	/*
 	this.browser = await puppeteer.launch({
@@ -242,11 +245,13 @@ async function changeScrapeData(socket, query,plate, zoom,maxPages) {
 
 async function closeBrowser(){
 	await this.closeTab();
+	this.socket.emit("log", {type:"success" ,content:`Tarayıcı kapatıyor...`});
 	await this.browser.close();
 }
 
 async function closeTab(){
 	await this.page.close();
+	this.socket.emit("log", {type:"success" ,content:`Sekme kapatıldı`});
 }
 
 module.exports = {ScrapeFactory};

@@ -43,6 +43,8 @@ async function psSocketConnection(socket) {
 	var username = "";
 	var browser = await openBrowser();
 	var isBrowserRunning = true;
+	socket.emit("log", {type:"success" ,content:`Tarayıcı açıldı`});
+
 	browser.on('disconnected', ()=> isBrowserRunning = false );
 	
 	console.info(`Socket ${socket.id} has connected.`);
@@ -56,6 +58,7 @@ async function psSocketConnection(socket) {
 		console.info(`Socket ${socket.id} has disconnected.`);
 
 		scrapeInstance == null ? browser.close() : scrapeInstance.closeBrowser();
+
 		//scrapeInstance.closeTab();
 		//browser.close();
     });
@@ -68,6 +71,7 @@ async function psSocketConnection(socket) {
 
 			scrapeInstance = new ScrapeFactory(socket, data.query, data.plate, data.zoom, data.maxPages,browser);
 			scrapeInstance.scrape();
+			socket.emit("log", {type:"success" ,content:`Maps Arama işlemi başladı`});
 		}
 
 		else{
@@ -78,8 +82,10 @@ async function psSocketConnection(socket) {
 				browser.on('disconnected', ()=> isBrowserRunning = false );
 				isBrowserRunning = true;
 				scrapeInstance.browser = browser;
+				this.emit("log", {type:"success" ,content:`Tarayıcı açıldı`});
 			}
 			scrapeInstance.scrape();
+			socket.emit("log", {type:"success" ,content:`Maps Arama işlemi başladı`});
 		}
         console.info(`Socket ${socket.id} arama isteği yolladı.`);
         //scrape(socket, data.query, data.plate, data.zoom, data.maxPages);
