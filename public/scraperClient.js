@@ -4,10 +4,10 @@ var cityInput = document.querySelector(".form .field #city");
 var zoomInput = document.querySelector(".form .field #zoom");
 var limitInput = document.querySelector(".form .field #limit");
 
+var logsListContainer = document.querySelector(".logger .logs");
 var scrapedItemsContainer = document.querySelector(".results .live");
 var currentPageSpan = document.querySelector(".results span.currentPage")
 var currentPageIndex = document.querySelector(".results span.currentIndex");
-
 
 const socket = io("/ps");
 
@@ -17,11 +17,11 @@ var currentSearch = {
                 "items":[]
             };
 
-
 async function main() {
 
     searchButton.addEventListener("click",handleSearch);
     socket.on("scrapedItem", handleScrapedItem);
+    socket.on("log", handleLogItem);
 
 
     //socket.on("connect", () => socket.emit("hello", `Hi there! I am ${window.navigator.userAgent}`));
@@ -101,6 +101,16 @@ function handleScrapedItem(data){
     scrapedItemsContainer.scrollTop = scrapedItemsContainer.scrollHeight;
 
     currentSearch.items.push(data);
+}
+
+function handleLogItem(data){
+    var logType = data.type;
+    var logContent = data.content;
+    var el = document.createElement("p");
+    el.dataset.logType = logType;
+    el.innerHTML = logContent;
+    logsListContainer.appendChild(el);
+    logsListContainer.scrollTop = logsListContainer.scrollHeight;
 }
 
 function  updateCurrentItemIndex(data){

@@ -18,12 +18,10 @@ const server = http.createServer(app);
 // bind socket.io to that server
 const io = socketio(server);
 
-
 // important! must listen from `server`, not `app`, otherwise socket.io won't function correctly
 server.listen(SERVER_PORT, () =>{
 	console.info(`Listening on port ${SERVER_PORT}.`)
-}
-);
+});
 
 // serve static files from a given folder
 app.use(express.static("public"));
@@ -73,7 +71,6 @@ async function psSocketConnection(socket) {
 		}
 
 		else{
-
 			scrapeInstance.changeScrapeData(socket, data.query, data.plate, data.zoom, data.maxPages)
 			// TODO: if browser closed, create new one set to instance.browser
 			if(!isBrowserRunning){

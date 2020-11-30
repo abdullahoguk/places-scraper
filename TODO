@@ -1,22 +1,21 @@
 try catch promise try again....
-maps url add "tr"
-puppeteer belli sayfadan veri çekmeye başla
-frontend form
+-maps url add "tr"
+-puppeteer belli sayfadan veri çekmeye başla
+-frontend form
 form submit/fetch or socket emit
 frontend progress or logger
 frontend il merkezi enlem boylam
 frontend list fetched data realtime wit sockets
-save data to backend and serve csv/json
+-save data to backend and serve csv/json
 kücük sunucuya kur
 webpack?
-sayfa yenilendiğinde/kapandığında/durdura basıldığında arkadaki işlemi durdur
+-sayfa yenilendiğinde/kapandığında/durdura basıldığında arkadaki işlemi durdur
 işlem durduktan/ya da bittikten sonra client tarafında csv/jsona çevir indirme butonu ekle
 hata olduğunda devam et butonu hatanın oldugu sayfa ve itemi socketle sunucuya gönder, veriyi cekmeye devam et
 electron app
 
-
-convert scraper function to SCRAPER object or class
-proje başladığında (GET req on /googlescraper) bir puppeteer instance aç her scrape işlemi ayrı sekmede olacak sekilde ayarla 
+-convert scraper function to SCRAPER object or class
+-proje başladığında (GET req on /googlescraper) bir puppeteer instance aç her scrape işlemi ayrı sekmede olacak sekilde ayarla 
 SCRAPER objelerine bu puppeteer instencesini bağla
 bu puppeteer instencenı try catche bağla / 
     tarayıcı çöktü mü kontrol et / cöktüyse 
@@ -70,3 +69,25 @@ Express sunucu kurulum
 socket io kurulum
 gelen verileri temizle (çalışma saatleri, website, telefon...)
 backend enlem boylam
+
+--------------------------------------------
+//
+mongo
+
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+
+var placeSchema = new Schema({
+	queryCity: {type:Number},
+	query: {type:[String]},
+	name: {type:[String]},
+	address: {type:[String]}
+	website:{type:[String]},
+	tel: {type:[String]},
+	mapsUrl: {type:[String]},
+	openHours: {type:[String]}
+	category: {type:[String]},
+	rating: {type:[String]}
+})
+
+

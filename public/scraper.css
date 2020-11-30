@@ -73,10 +73,10 @@ thead,
 tr,
 th,
 td {
-	border: 0;
-	font-size: 100%;
-	margin: 0;
-	padding: 0;
+  border: 0;
+  font-size: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Montserrat:wght@300;400;600;800&display=swap");
@@ -247,6 +247,15 @@ body {
 	margin: 0.5em;
 	font-weight: 800;
 }
+
+.logger .logs p[data-log-type="success"]{
+	color: #2d6b09;
+}
+
+.logger .logs p[data-log-type="error"]{
+	color: #ba0600;
+}
+
 
 .results {
 	background-color: #ececec;

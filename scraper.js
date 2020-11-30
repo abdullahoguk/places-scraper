@@ -15,7 +15,7 @@ function ScrapeFactory(socket, query,plate, zoom,maxPages,browser) {
     this.lat = cities[plate].lat;
 	this.lon = cities[plate].lon;
 	this.zoom = zoom;
-	this.url = `https://www.google.com/maps/search/${this.query}/@${this.lat},${this.lon},${this.zoom}z`;
+	this.url = `https://www.google.com.tr/maps/search/${this.query}/@${this.lat},${this.lon},${this.zoom}z`;
 	
 	this.currentPage = 1;
 	this.maxPages= maxPages;
@@ -65,7 +65,7 @@ async function scrape(){
 
 		//Iterate items in current page
 		for (let index = 1; index <= numberOfItems; index++) {
-			console.log("Sayfa:" + this.currentPage + " Eleman:" + index);
+			//console.log("Sayfa:" + this.currentPage + " Eleman:" + index);
 			await this.page.waitForSelector(
 				`.section-layout .section-result[data-result-index='${index}']`
 			);
@@ -162,7 +162,9 @@ async function scrape(){
             //console.log(JSON.stringify(data));
 			this.socket.emit("scrapedItem", data);
 			this.socket.emit("scrapedItemIndex", {page:this.currentPage, index});
+			this.socket.emit("log", {type:"success" ,content:`Sayfa: ${this.currentPage} Eleman: ${index}`});
 
+			
 			await this.page.waitForTimeout(1000);
 			//await page.goBack();
 			await this.page.click("button.section-back-to-list-button");
@@ -206,10 +208,11 @@ this.closeTab();
 
 	fs.writeFile(`./public/scrapedData/${this.query}.csv`, csvPlaces, () => {
 		console.log("CSV Dosyaya yazıldı");
+		this.socket.emit("log", {type:"success" ,content:`CSV dosyası sunucuya yazıldı`});
 	});
 
 	fs.writeFile(`./public/scrapedData/${this.query}.json`, JSON.stringify(places), () => {
-		console.log("JSON Dosyaya yazıldı");
+		this.socket.emit("log", {type:"success" ,content:`JSON dosyası sunucuya yazıldı`});
 	});
 }
 
