@@ -195,7 +195,7 @@ async function scrape(){
 		}
 		//await timeout(3000);
 
-		console.log(pagePlaces);
+		//console.log(pagePlaces);
 		console.log("isMax: " + this.currentPage <= this.maxPages);
 	}
 //this.closeBrowser()
