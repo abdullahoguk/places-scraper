@@ -6,7 +6,6 @@ const socketio = require("socket.io");
 const { ScrapeFactory } = require("./scraper.js");
 const puppeteer = require("puppeteer");
 
-
 const SERVER_PORT = process.env.PORT || 3000;
 
 let onlineClientsCustomUrl = new Set();

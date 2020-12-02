@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "watch": "nodemon"
   },
   "repository": {
     "type": "git",
@@ -23,5 +24,14 @@
     "puppeteer": "^5.4.0",
     "serve-index": "^1.9.1",
     "socket.io": "^3.0.0"
+  },
+  "nodemonConfig":{
+    "delay":1000,
+    "ignore":[
+    ".git/*",
+    "misc/*",
+    "public/*",
+    "public/scrapedData/*"
+    ]    
   }
 }
