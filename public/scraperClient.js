@@ -54,7 +54,6 @@ async function main() {
 
 main();
 
-
 Object.values(cities).forEach(city => {
     document.querySelector("#city").innerHTML+=`<option value=${city.plate}>${city.name}</option>`;
 });

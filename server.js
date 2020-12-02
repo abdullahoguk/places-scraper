@@ -95,9 +95,8 @@ async function psSocketConnection(socket) {
 }
 
 async function openBrowser(){
-	
 	var headless = process.env.PUPPETEER_HEADLESS == "false" ? false : true;
-	
+
 	return  await puppeteer.launch({
 		headless: headless,
 		args: ["--disable-setuid-sandbox","--no-sandbox"],

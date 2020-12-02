@@ -255,5 +255,3 @@ async function closeTab(){
 }
 
 module.exports = {ScrapeFactory};
-
-

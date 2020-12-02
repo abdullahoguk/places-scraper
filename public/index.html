@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Sample page</title>
 </head>
+
 <body>
+    <a href="/googleplaces">
+        <h2>Google Dükkan Arama</h2>
+    </a>
 
-    <a href="/googleplaces"><h2>Google Dükkan Arama</h2></a>
-<p>This is a sample page demonstrating how Express and socket.io work.</p>
+    <p>
+        Here's a random number fetched via REST: <span id="random-number"></span>
+    </p>
 
-<p>Here's a random number fetched via REST: <span id="random-number"></span></p>
+    <p>Server welcome message: <span id="welcome"></span></p>
+    <p>Seconds since server started: <span id="seconds"></span></p>
+    <p>Clients online: <span id="online"></span></p>
 
-<p>Server welcome message: <span id="welcome"></span></p>
+    <!-- this link is magically provided when you set up socket.io in server -->
+    <script src="/socket.io/socket.io.js"></script>
 
-<p>Seconds since server started: <span id="seconds"></span></p>
-
-<p>Clients online: <span id="online"></span></p>
-
-<!-- this link is magically provided when you set up socket.io in server -->
-<script src="/socket.io/socket.io.js"></script>
-
-<script src="index.js"></script>
-
+    <script src="index.js"></script>
 </body>
+
 </html>
