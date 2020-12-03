@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "watch": "nodemon"
+    "watch": "nodemon",
+    "calistir": "pm2 start process.json --watch",
+    "durdur": "pm2 stop serbayNode"
   },
   "repository": {
     "type": "git",
